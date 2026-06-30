@@ -89,11 +89,11 @@ public class main {
         System.out.println("              CREAR CUENTA             ");
         System.out.println("=======================================");
         System.out.println(" --- Usuario: ");
-        usuario = sc.nextLine().toString();
+        usuario = verificarEntrada();
         out.print(usuario + ", ");
         out.close();
         System.out.println(" --- Contrasena: ");
-        contrasena = sc.nextLine().toString();
+        contrasena = verificarEntrada();
         passOut.print(contrasena + ", ");
         passOut.close();
         sc.close();
@@ -163,6 +163,14 @@ public class main {
             sc.next();
         }
         return sc.nextLine();
+    }
+
+    protected static String verificarEntrada(){
+        while(sc.nextLine().toString().length() > 15){
+            System.out.println("Error, usuario o contrasena muy larga || limite: 15, ingrese otra vez: ");
+            sc.next();
+        }
+        return sc.nextLine().toString();
     }
 
     public static void menu() {
