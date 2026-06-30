@@ -74,8 +74,8 @@ public class main {
             contrasena = leerEntrada();
         }
 
-        System.out.println("\n\n Sesion iniciada! \n\n");
-        Thread.sleep(1500);
+        System.out.println("\n\nSesion iniciada! \n\n");
+        Thread.sleep(500);
         limpiarEntrada();
 
     }
@@ -87,7 +87,7 @@ public class main {
         String usuario, contrasena;
         System.out.println("=======================================");
         System.out.println("              CREAR CUENTA             ");
-        System.out.println("=======================================");
+        System.out.println("=======================================\n");
         System.out.println(" --- Usuario: ");
         usuario = verificarEntrada();
         out.print(usuario + ", ");
@@ -178,11 +178,11 @@ public class main {
         int seleccion;
         System.out.println("================================");
         System.out.println("              MENU             ");
-        System.out.println("================================");
-        System.out.println("1. Dispositivos");
-        System.out.println("2. Recibos");
-        System.out.println("3. Consejos");
-        System.out.println("4. Agregar catalogo");
+        System.out.println("================================\n");
+        System.out.println("1.- Dispositivos");
+        System.out.println("2.- Recibos");
+        System.out.println("3.- Consejos");
+        System.out.println("4.- Agregar catalogo");
         seleccion = sc.nextInt();
         switch (seleccion) {
             case 1:
