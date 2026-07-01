@@ -11,7 +11,15 @@ import java.util.HashMap;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Main extends Metodos {
+public class Main {
+/*
+
+NOTA: 
+Convertir menu principal a menu de propiedad y quitar la opcion de crear cuenta y cerrar sesion y modificar la opcion de salir
+( Menu propiedad n ) 
+
+*/
+
     private static Scanner sc = new Scanner(System.in);
     protected static String usuario, contrasena, input, sesionActual;
     protected static List<String> names, passwords;
@@ -19,6 +27,35 @@ public class Main extends Metodos {
     protected static Map<String, String> accountsList = new HashMap<>();
     protected static Path relativePath = Paths.get("database");
     protected static Path absolutePath = relativePath.toAbsolutePath().normalize();
+
+    private static final void inicializarBD() throws Exception {
+        File usernames = new File(absolutePath + "/usuarios.txt");
+        Scanner userScanner = new Scanner(usernames);
+        File passwords = new File(absolutePath + "/contrasenas.txt");
+        Scanner passScanner = new Scanner(passwords);
+        if (userScanner.hasNextLine() && passScanner.hasNextLine()) {
+            final String input = userScanner.nextLine().toString();
+            List<String> names = Arrays.stream(input.split("\\s*,\\s*")).collect(Collectors.toList());
+            for (String name : names) {
+                nameList.add(name.trim());
+            }
+            userScanner.close();
+
+            final String passInput = passScanner.nextLine().toString();
+            List<String> pass = Arrays.stream(passInput.split("\\s*,\\s*")).collect(Collectors.toList());
+            for (String password : pass) {
+                passList.add(password.trim());
+            }
+            passScanner.close();
+            int i = 0;
+
+            for (String name : nameList) {
+                accountsList.put(name, passList.get(i));
+                i++;
+            }
+        }
+
+    }
 
     private static final boolean verifyUser(String user) throws Exception {
         /*
@@ -31,7 +68,7 @@ public class Main extends Metodos {
          * nameList.add(name.trim());
          * }
          */
-        if (nameList.indexOf(user) < 0) {
+        if (accountsList.containsKey(user) == false) {
             // userScanner.close();
             return false;
         }
@@ -68,31 +105,34 @@ public class Main extends Metodos {
     }
 
     private static final void iniciarSesion() throws Exception {
+        inicializarBD();
         System.out.println("==================================");
         System.out.println("         Iniciar sesion          ");
         System.out.println("==================================\n");
         System.out.println("Ingrese usuario: ");
-        usuario = sc.next().toString();
+        usuario = sc.next().trim().toString();
 
         while (verifyUser(usuario) == false) {
             System.out.println("Error, usuario no existe, intente otra vez: ");
-            usuario = sc.next().toString();
+            System.out.println("Account exists: " + accountsList.containsKey(usuario));
+            System.out.println("Account list: " + accountsList);
+            usuario = sc.next().trim().toString();
             sesionActual = usuario;
         }
         sesionActual = usuario;
 
         System.out.println("Ingrese contrasena: ");
-        contrasena = sc.next().toString();
+        contrasena = sc.next().trim().toString();
         while (verifyPass(contrasena, usuario) == false) {
             System.out.println("Error, contrasena incorrecta, intente otra vez: ");
-            contrasena = sc.next().toString();
+            contrasena = sc.next().trim().toString();
         }
 
         System.out.println("\n\nSesion iniciada! \n\n");
 
         Thread.sleep(500);
         limpiarEntrada();
-        propiedadesMenu();
+        //propiedadesMenu();
         menu();
 
     }
@@ -105,49 +145,18 @@ public class Main extends Metodos {
         System.out.println("              CREAR CUENTA             ");
         System.out.println("=======================================\n");
         System.out.println(" --- Usuario: ");
-        usuario = sc.next().toString();
-        while(verifyUser(usuario) == true){
-            System.out.println("Error, esta");
-        }
+        usuario = sc.next().trim().toString();
         out.print(usuario + ", ");
         out.close();
         System.out.println(" --- Contrasena: ");
-        contrasena = sc.next().toString();
+        contrasena = sc.next().trim().toString();
         passOut.print(contrasena + ", ");
         passOut.close();
-        System.out.println("\nCuenta creada con exito!\nAbriendo menu principal...");
+        System.out.println("\nCuenta creada con exito!");
         Thread.sleep(1500);
         limpiarEntrada();
+        //propiedadesMenu();
         menu();
-    }
-
-    private static final void inicializarBD() throws Exception {
-        File usernames = new File(absolutePath + "/usuarios.txt");
-        Scanner userScanner = new Scanner(usernames);
-        File passwords = new File(absolutePath + "/contrasenas.txt");
-        Scanner passScanner = new Scanner(passwords);
-        if (userScanner.hasNextLine() && passScanner.hasNextLine()) {
-            final String input = userScanner.nextLine().toString();
-            List<String> names = Arrays.stream(input.split("\\s*,\\s*")).collect(Collectors.toList());
-            for (String name : names) {
-                nameList.add(name.trim());
-            }
-            userScanner.close();
-
-            final String passInput = passScanner.nextLine().toString();
-            List<String> pass = Arrays.stream(passInput.split("\\s*,\\s*")).collect(Collectors.toList());
-            for (String password : pass) {
-                passList.add(password.trim());
-            }
-            passScanner.close();
-            int i = 0;
-
-            for (String name : nameList) {
-                accountsList.put(name, passList.get(i));
-                i++;
-            }
-        }
-
     }
 
     public static void main(String[] args) throws Exception {
@@ -213,7 +222,7 @@ public class Main extends Metodos {
     protected static final void menu() throws Exception {
         int seleccion;
         System.out.println("================================");
-        System.out.println("              MENU             ");
+        System.out.println("              MENU              ");
         System.out.println("================================\n");
         System.out.println("1.- Dispositivos");
         System.out.println("2.- Recibos");

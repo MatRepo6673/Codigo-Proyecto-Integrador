@@ -2,7 +2,6 @@ import java.util.Date;
 
 public class Lectura extends Dispositivo {
     private static int lecturaID;
-    private static int dispositivoID;
     private static float voltaje;
     private static float consumo;
     private static Date fecha_hora;

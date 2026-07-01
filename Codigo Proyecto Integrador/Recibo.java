@@ -2,7 +2,6 @@ import java.util.Date;
 
 public class Recibo extends Propiedad {
     private static int reciboID;
-    private static int usuarioID;
     private static float Kilowats;
     private static boolean Estado;
     private static int monto;
