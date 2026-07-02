@@ -15,18 +15,19 @@ public class Main {
 /*
 
 NOTA: 
-Convertir menu principal a menu de propiedad y quitar la opcion de crear cuenta y cerrar sesion y modificar la opcion de salir
-( Menu propiedad n ) 
+
+Todo el codigo de la clase Main y las otras clases estan sujeto a cambiar y mejorar, este es un progreso del proyecto, 
+por lo que se implementaran nuevas funciones y se mejoraran las ya existentes
 
 */
 
     private static Scanner sc = new Scanner(System.in);
-    protected static String usuario, contrasena, input, sesionActual;
-    protected static List<String> names, passwords;
-    protected static ArrayList<String> nameList = new ArrayList<>(), passList = new ArrayList<>();
-    protected static Map<String, String> accountsList = new HashMap<>();
-    protected static Path relativePath = Paths.get("database");
-    protected static Path absolutePath = relativePath.toAbsolutePath().normalize();
+    private static String usuario, contrasena, input, sesionActual, direccionPropiedad, tipoTarifaPropiedad, nombrePropiedad ;
+    private static List<String> names, passwords;
+    private static ArrayList<String> nameList = new ArrayList<>(), passList = new ArrayList<>();
+    private static Map<String, String> accountsList = new HashMap<>(), propiedadesList = new HashMap<>();
+    private static Path relativePath = Paths.get("database");
+    private static Path absolutePath = relativePath.toAbsolutePath().normalize();
 
     private static final void inicializarBD() throws Exception {
         File usernames = new File(absolutePath + "/usuarios.txt");
@@ -100,7 +101,7 @@ Convertir menu principal a menu de propiedad y quitar la opcion de crear cuenta 
         }
     }
 
-    private static final void limpiarEntrada() throws Exception {
+    protected static final void limpiarEntrada() throws Exception {
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
     }
 
@@ -132,8 +133,7 @@ Convertir menu principal a menu de propiedad y quitar la opcion de crear cuenta 
 
         Thread.sleep(500);
         limpiarEntrada();
-        //propiedadesMenu();
-        menu();
+        propiedadesMenu();
 
     }
 
@@ -155,24 +155,18 @@ Convertir menu principal a menu de propiedad y quitar la opcion de crear cuenta 
         System.out.println("\nCuenta creada con exito!");
         Thread.sleep(1500);
         limpiarEntrada();
-        //propiedadesMenu();
-        menu();
+        iniciarSesion();
     }
 
     public static void main(String[] args) throws Exception {
 
         File usernames = new File(absolutePath + "/usuarios.txt");
         File passwords = new File(absolutePath + "/contrasenas.txt");
-        if (!usernames.exists()) {
-            usernames.createNewFile();
-        }
-        if (!passwords.exists()) {
-            passwords.createNewFile();
-        }
         Scanner userScanner = new Scanner(usernames);
         Scanner passScanner = new Scanner(passwords);
 
         inicializarBD();
+        inicializarPropiedades();
 
         if (userScanner.hasNextLine() && passScanner.hasNextLine()) {
             iniciarSesion();
@@ -219,8 +213,9 @@ Convertir menu principal a menu de propiedad y quitar la opcion de crear cuenta 
      * }
      */
 
-    protected static final void menu() throws Exception {
+    private static final void menu() throws Exception {
         int seleccion;
+        limpiarEntrada();
         System.out.println("================================");
         System.out.println("              MENU              ");
         System.out.println("================================\n");
@@ -228,71 +223,179 @@ Convertir menu principal a menu de propiedad y quitar la opcion de crear cuenta 
         System.out.println("2.- Recibos");
         System.out.println("3.- Consejos");
         System.out.println("4.- Agregar catalogo");
-        System.out.println("5.- Agregar cuenta");
-        System.out.println("6.- Cerrar sesion");
-        System.out.println("7.- Salir");
+        System.out.println("5.- Salir");
 
         seleccion = checarNumero();
 
         switch (seleccion) {
             case 1:
-                System.out.println("entraste a dispositivos");
-                limpiarEntrada();
-                propiedadesMenu();
+                System.out.println("entraste a dispositivos...");
                 break;
             case 2:
-                System.out.println("entraste a recibos");
+                new Recibo().generarRecibo();
                 break;
             case 3:
-                System.out.println("entraste a consejos");
+                System.out.println("entraste a consejos...");
                 break;
             case 4:
-                System.out.println("entraste a agregar catalogo");
+                System.out.println("entraste a agregar catalogo...");
                 break;
+
             case 5:
-                limpiarEntrada();
-                crearCuenta();
-                break;
-            case 6:
-                System.out.println("\nCerrando sesion...");
+                System.out.println("Saliendo...");
                 Thread.sleep(700);
-                limpiarEntrada();
-                Thread.sleep(10);
-                iniciarSesion();
-                break;
-            case 7:
-                System.out.println("Saliendo del sistema...");
-                Thread.sleep(700);
-                System.exit(0);
+                propiedadesMenu();
                 break;
         }
 
     }
 
-    protected static final void propiedadesMenu() {
+    private static final void inicializarPropiedades() throws Exception {
+        File propiedadesFile = new File(absolutePath + "/propiedades/propiedades.txt");
+        File duenosFile = new File(absolutePath + "/propiedades/duenos.txt");
+
+        propiedadesList.clear();
+        Scanner propiedadScanner = new Scanner(propiedadesFile);
+        Scanner duenosScanner = new Scanner(duenosFile);
+
+        if (propiedadScanner.hasNextLine() && duenosScanner.hasNextLine()) {
+            String input = propiedadScanner.nextLine().toString();
+            List<String> propiedades = Arrays.stream(input.split("\\s*,\\s*")).collect(Collectors.toList());
+            String passInput = duenosScanner.nextLine().toString();
+            List<String> duenos = Arrays.stream(passInput.split("\\s*,\\s*")).collect(Collectors.toList());
+
+            for (int i = 0; i < propiedades.size(); i++) {
+                String propiedad = propiedades.get(i).trim();
+                if (!propiedad.isEmpty()) {
+                    String dueno = "";
+                    if (i < duenos.size()) {
+                        dueno = duenos.get(i).trim();
+                    }
+                    propiedadesList.put(propiedad, dueno);
+                }
+            }
+        }
+
+        propiedadScanner.close();
+        duenosScanner.close();
+    }
+
+    private static final void propiedadesMenu() throws Exception {
         int opcion;
-        ArrayList<String> propiedades = new ArrayList<>();
-        Scanner scanner = new Scanner(System.in);
+        inicializarPropiedades();
+        limpiarEntrada();
         System.out.println("===================================");
         if (Main.sesionActual.charAt(Main.sesionActual.length() - 1) == 'a'
                 || Main.sesionActual.charAt(Main.sesionActual.length() - 1) == 'A') {
             System.out.println("        BIENVENIDA: " + Main.sesionActual.toUpperCase());
         } else
             System.out.println("        BIENVENIDO: " + Main.sesionActual.toUpperCase());
-        System.out.println("     Que propiedad quieres ver");
         System.out.println("===================================");
+        System.out.println("1.- Agregar propiedad");
+        System.out.println("2.- Ver propiedades");
+        System.out.println("3.- Entrar a una propiedad");
+        System.out.println("4.- Salir");
 
-        System.out.println("0. Agregar propiedad");
-        for (int i = 0; i < propiedades.size(); i++) {
-            System.out.println((i + 1) + ". " + propiedades.get(i));
+        opcion = checarNumero();
+
+        switch (opcion) {
+            case 1:
+                agregarPropiedadMenu();
+                Thread.sleep(700);
+                limpiarEntrada();
+                propiedadesMenu();
+                break;
+            case 2:
+                verPropiedades();
+                Thread.sleep(1500);
+                limpiarEntrada();
+                propiedadesMenu();
+                break;
+            case 3:
+                entrarPropiedad();
+                break;
+            case 4:
+                System.out.println("Saliendo...");
+                Thread.sleep(700);
+                limpiarEntrada();
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Opcion invalida");
+                Thread.sleep(700);
+                limpiarEntrada();
+                propiedadesMenu();
+                break;
         }
-        opcion = scanner.nextInt();
-        scanner.nextLine();
+    }
 
-        if (opcion == 0) {
-            System.out.println();
+    private static final void actualizarPropiedades() throws Exception {
+        inicializarPropiedades();
+    }
+
+    private static final void verPropiedades() throws Exception {
+        limpiarEntrada();
+        inicializarPropiedades();
+        System.out.println("===================================");
+        System.out.println("        TUS PROPIEDADES            ");
+        System.out.println("===================================\n");
+        boolean encontrada = false;
+
+        for (Map.Entry<String, String> entry : propiedadesList.entrySet()) {
+            if (entry.getValue().equals(sesionActual)) {
+                System.out.println("- " + entry.getKey());
+                encontrada = true;
+            }
         }
-        scanner.close();
 
+        if (!encontrada) {
+            System.out.println("No tienes propiedades aun.");
+        }
+    }
+
+    private static final void entrarPropiedad() throws Exception {
+        System.out.println("Ingrese el nombre de la propiedad: ");
+        String propiedad = sc.next().trim();
+
+        if (propiedadesList.containsKey(propiedad) && propiedadesList.get(propiedad).equals(sesionActual)) {
+            System.out.println("Entraste a la propiedad: " + propiedad);
+            Thread.sleep(1000);
+            limpiarEntrada();
+            menu();
+        } else {
+            System.out.println("No tienes acceso a esa propiedad.");
+            Thread.sleep(1000);
+            limpiarEntrada();
+            propiedadesMenu();
+        }
+    }
+
+    private static final void agregarPropiedadMenu() throws Exception {
+        File propiedadesFolder = new File(absolutePath + "/propiedades");
+        if (!propiedadesFolder.exists()) {
+            propiedadesFolder.mkdirs();
+        }
+
+        PrintWriter propiedadOut = new PrintWriter(new FileWriter(absolutePath + "/propiedades/propiedades.txt", true));
+        PrintWriter duenosOut = new PrintWriter(new FileWriter(absolutePath + "/propiedades/duenos.txt", true));
+        System.out.println("===================================");
+        System.out.println("         AGREGAR PROPIEDAD        ");
+        System.out.println("===================================\n");
+
+        sc.nextLine();
+        System.out.println("Ingrese el nombre de la propiedad: ");
+        nombrePropiedad = leerEntrada().trim().toString();
+        System.out.println("Ingrese la direccion de la propiedad: ");
+        direccionPropiedad = sc.next().trim().toString();
+
+        propiedadOut.print(nombrePropiedad + ", ");
+        duenosOut.print(Main.sesionActual + ", ");
+        propiedadOut.close();
+        duenosOut.close();
+        inicializarPropiedades();
+
+        System.out.println("\nPropiedad agregada con exito!");
+        Thread.sleep(1500);
+        limpiarEntrada();
     }
 }
