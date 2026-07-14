@@ -13,14 +13,10 @@ public class Recibo {
                 (int) (Math.random() * 5000) + 1);
         Kilowats = new Propiedad().calcularConsumoTotal();
         Estado = new Propiedad().verificarAdeudos();
+        fecha_limite = new Date(System.currentTimeMillis() + ThreadLocalRandom.current().nextLong(10_000_000_000L));
         inicio = new Date();
-        fin = new Date(System.currentTimeMillis() + ThreadLocalRandom.current().nextLong(10_000_000_000L));
-        fecha_limite = new Date(ThreadLocalRandom.current().nextLong(inicio.getTime(), fin.getTime()));
-        try{
-            new Main().limpiarEntrada();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+        fin = new Date(ThreadLocalRandom.current().nextLong(inicio.getTime(), fecha_limite.getTime()));
+
         System.out.println("================================");
         System.out.println("           RECIBO CFE           ");
         System.out.println("================================\n");
@@ -30,7 +26,7 @@ public class Recibo {
         System.out.println("FECHA LIMITE: " + fecha_limite);
         System.out.println("KILOWATS: " + Kilowats);
         System.out.println("ESTADO: " + (Estado ? "ADEUDO" : "PAGADO"));
-        
+
     }
 
     public static void leerLectura() {

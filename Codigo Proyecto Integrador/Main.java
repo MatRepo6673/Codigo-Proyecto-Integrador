@@ -12,18 +12,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Main {
-/*
-
-NOTA: 
-
-Todo el codigo de la clase Main y las otras clases estan sujeto a cambiar y mejorar, este es un progreso del proyecto, 
-por lo que se implementaran nuevas funciones y se mejoraran las ya existentes
-
-*/
+    /*
+      
+    NOTA:
+      
+    Todo el codigo de la clase Main y las otras clases estan sujeto a cambiar y
+    mejorar, este es un progreso del proyecto,
+    por lo que se implementaran nuevas funciones y se mejoraran las ya existentes
+      
+     */
 
     private static Scanner sc = new Scanner(System.in);
-    private static String usuario, contrasena, input, sesionActual, direccionPropiedad, tipoTarifaPropiedad, nombrePropiedad ;
-    private static List<String> names, passwords;
+    private static String usuario, contrasena, input, sesionActual, direccionPropiedad, tipoTarifaPropiedad,
+            nombrePropiedad;
     private static ArrayList<String> nameList = new ArrayList<>(), passList = new ArrayList<>();
     private static Map<String, String> accountsList = new HashMap<>(), propiedadesList = new HashMap<>();
     private static Path relativePath = Paths.get("database");
@@ -47,7 +48,7 @@ por lo que se implementaran nuevas funciones y se mejoraran las ya existentes
             for (String password : pass) {
                 passList.add(password.trim());
             }
-            passScanner.close();
+            passScanner.close();;
             int i = 0;
 
             for (String name : nameList) {
@@ -72,8 +73,7 @@ por lo que se implementaran nuevas funciones y se mejoraran las ya existentes
         if (accountsList.containsKey(user) == false) {
             // userScanner.close();
             return false;
-        }
-            else {
+        } else {
             // userScanner.close();
             return true;
         }
@@ -158,32 +158,6 @@ por lo que se implementaran nuevas funciones y se mejoraran las ya existentes
         iniciarSesion();
     }
 
-    public static void main(String[] args) throws Exception {
-
-        File usernames = new File(absolutePath + "/usuarios.txt");
-        File passwords = new File(absolutePath + "/contrasenas.txt");
-        Scanner userScanner = new Scanner(usernames);
-        Scanner passScanner = new Scanner(passwords);
-
-        inicializarBD();
-        inicializarPropiedades();
-
-        if (userScanner.hasNextLine() && passScanner.hasNextLine()) {
-            iniciarSesion();
-            userScanner.close();
-            passScanner.close();
-            menu();
-
-        } else {
-            System.out.println(
-                    "Error: No se encontraron usuarios o contraseñas en la computadora\n\nAbriendo menu de crear cuenta...");
-            Thread.sleep(2500);
-            limpiarEntrada();
-            crearCuenta();
-        }
-
-    }
-
     protected static String leerEntrada() {
         while (!sc.hasNextLine()) {
             System.out.println("Error, ese no es un dato valido, intente otra vez:");
@@ -232,7 +206,9 @@ por lo que se implementaran nuevas funciones y se mejoraran las ya existentes
                 System.out.println("entraste a dispositivos...");
                 break;
             case 2:
+                limpiarEntrada();
                 new Recibo().generarRecibo();
+                Thread.sleep(7000);
                 break;
             case 3:
                 System.out.println("entraste a consejos...");
@@ -285,11 +261,7 @@ por lo que se implementaran nuevas funciones y se mejoraran las ya existentes
         inicializarPropiedades();
         limpiarEntrada();
         System.out.println("===================================");
-        if (Main.sesionActual.charAt(Main.sesionActual.length() - 1) == 'a'
-                || Main.sesionActual.charAt(Main.sesionActual.length() - 1) == 'A') {
-            System.out.println("        BIENVENIDA: " + Main.sesionActual.toUpperCase());
-        } else
-            System.out.println("        BIENVENIDO: " + Main.sesionActual.toUpperCase());
+        System.out.println("        BIENVENIDO: " + Main.sesionActual.toUpperCase());
         System.out.println("===================================");
         System.out.println("1.- Agregar propiedad");
         System.out.println("2.- Ver propiedades");
@@ -329,26 +301,22 @@ por lo que se implementaran nuevas funciones y se mejoraran las ya existentes
         }
     }
 
-    private static final void actualizarPropiedades() throws Exception {
-        inicializarPropiedades();
-    }
-
     private static final void verPropiedades() throws Exception {
         limpiarEntrada();
         inicializarPropiedades();
         System.out.println("===================================");
         System.out.println("        TUS PROPIEDADES            ");
         System.out.println("===================================\n");
-        boolean encontrada = false;
+        boolean exiten = false;
 
         for (Map.Entry<String, String> entry : propiedadesList.entrySet()) {
             if (entry.getValue().equals(sesionActual)) {
                 System.out.println("- " + entry.getKey());
-                encontrada = true;
+                exiten = true;
             }
         }
 
-        if (!encontrada) {
+        if (!exiten) {
             System.out.println("No tienes propiedades aun.");
         }
     }
@@ -397,5 +365,31 @@ por lo que se implementaran nuevas funciones y se mejoraran las ya existentes
         System.out.println("\nPropiedad agregada con exito!");
         Thread.sleep(1500);
         limpiarEntrada();
+    }
+
+        public static void main(String[] args) throws Exception {
+
+        File usernames = new File(absolutePath + "/usuarios.txt");
+        File passwords = new File(absolutePath + "/contrasenas.txt");
+        Scanner userScanner = new Scanner(usernames);
+        Scanner passScanner = new Scanner(passwords);
+
+        inicializarBD();
+        inicializarPropiedades();
+
+        if (userScanner.hasNextLine() && passScanner.hasNextLine()) {
+            iniciarSesion();
+            userScanner.close();
+            passScanner.close();
+            menu();
+
+        } else {
+            System.out.println(
+                    "Error: No se encontraron usuarios o contraseñas en la computadora\n\nAbriendo menu de crear cuenta...");
+            Thread.sleep(2500);
+            limpiarEntrada();
+            crearCuenta();
+        }
+
     }
 }
