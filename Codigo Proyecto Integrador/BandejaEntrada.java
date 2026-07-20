@@ -1,8 +1,10 @@
 public class BandejaEntrada extends Alerta{
     private static int notificacionID;
-    private static boolean leido;
+    protected static boolean leido;
     private static String mensaje;
     private static String titulo;
+
+
 
     public static boolean marcarComoLeido(){
         return false;

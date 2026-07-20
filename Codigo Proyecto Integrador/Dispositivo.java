@@ -5,6 +5,34 @@ public class Dispositivo extends Propiedad{
     private static String nombre_dispositivo;
     private static String tipo_dispositivo;
 
+    public static int getDispositivoID(){
+        return dispositivoID;
+    }
+
+    public String getUbicacionInterna(){
+        return ubicacion_interna;
+    }
+
+    public void setUbicacionInterna(String ubicacion){
+        this.ubicacion_interna = ubicacion;
+    }
+
+    public String getNombreDispositivo(){
+        return nombre_dispositivo;
+    }
+
+    public void setNombreDispositivo(String nombre){
+        this.nombre_dispositivo = nombre;
+    }
+
+    public String getTipoDispositivo(){
+        return tipo_dispositivo;
+    }
+
+    public void setTipoDispositivo(String tipo){
+        this.tipo_dispositivo = tipo;
+    }
+
     public static final String getRegistro(){
         return "watts utulizados: ";
     }
